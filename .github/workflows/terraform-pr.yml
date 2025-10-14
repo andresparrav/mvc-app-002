@@ -8,14 +8,13 @@ on:
       - 'terraform/**'
 
 permissions:
+  id-token: write
   contents: read
   pages: write
-  id-token: write
-
 jobs:
   terraform-validation:
     runs-on: ubuntu-latest
-    environment: development
+    environment: production
     defaults:
       run:
         working-directory: ./terraform
