@@ -65,5 +65,3 @@ jobs:
           });
       env:
         PLAN_STDOUT: ${{ steps.plan.outputs.stdout }}
-
-# comment 2
