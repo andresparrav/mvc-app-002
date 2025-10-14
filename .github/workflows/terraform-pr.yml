@@ -13,7 +13,7 @@ permissions:
 jobs:
   terraform-validation:
     runs-on: ubuntu-latest
-    environment: development
+    environment: production
     defaults:
       run:
         working-directory: ./terraform
