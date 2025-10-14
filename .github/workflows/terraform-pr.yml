@@ -6,6 +6,11 @@ on:
     paths:
       - 'terraform/**'
 
+  pull_request:
+    branches: [ main ]
+    paths:
+    - 'terraform/**'
+
 permissions:
   id-token: write
   contents: read
