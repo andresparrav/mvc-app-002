@@ -1,0 +1,52 @@
+name: 'Terraform Deploy to Azure'
+
+on:
+  # Se activa en MERGE de PRs
+  pull_request:
+    types: [closed]
+    branches: [ main ]
+
+  # Se activa en push directo a main (backup)
+  push:
+    branches: [ main ]
+    paths:
+      - 'terraform/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform-deploy:
+    # Para PRs closed, solo ejecutar si fue MERGE
+    if: |
+      github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    # environment: production
+    defaults:
+      run:
+        working-directory: ./terraform
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: |
+          {
+            "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
+            "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+            "tenantId": "${{ secrets.AZURE_TENANT_ID }}",
+            "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+          }
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
