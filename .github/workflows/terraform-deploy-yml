@@ -1,9 +1,16 @@
 name: 'Terraform Deploy to Azure'
 
 on:
+  # Se activa en MERGE de PRs
   pull_request:
     types: [closed]
     branches: [ main ]
+
+  # Se activa en push directo a main (backup)
+  push:
+    branches: [ main ]
+    paths:
+      - 'terraform/**'
 
 permissions:
   id-token: write
@@ -11,7 +18,10 @@ permissions:
 
 jobs:
   terraform-deploy:
-    if: github.event.pull_request.merged == true  # ← SOLO si fue MERGE (no solo close)
+    # Para PRs closed, solo ejecutar si fue MERGE
+    if: |
+      (github.event_name == 'push') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     environment: production
     defaults:
@@ -38,5 +48,3 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
-
-# comment
