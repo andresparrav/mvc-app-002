@@ -1,7 +1,7 @@
 name: 'Terraform Deploy to Azure'
 
 on:
-  push:
+  pull_request:
     types: [closed]
     branches: [ main ]
     paths:
