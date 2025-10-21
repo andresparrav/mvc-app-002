@@ -50,3 +50,17 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
+
+    - name: Get Terraform Outputs
+      id: terraform-output
+      run: |
+        echo "resource_group_name=$(terraform output -raw resource_group_name)" >> $GITHUB_OUTPUT
+        echo "app_service_name=$(terraform output -raw app_service_name)" >> $GITHUB_OUTPUT
+
+    - name: Deploy .NET Application
+      run: |
+        az webapp deploy \
+          --resource-group ${{ steps.terraform-output.outputs.resource_group_name }} \
+          --name ${{ steps.terraform-output.outputs.app_service_name }} \
+          --src-path ./publish \
+          --type zip
