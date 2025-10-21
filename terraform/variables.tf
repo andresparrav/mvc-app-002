@@ -27,3 +27,9 @@ variable "location" {
   type        = string
   default     = "East US"
 }
+
+variable "environment" {
+  description = "Entorno de despliegue (dev, staging, prod)"
+  type        = string
+  default     = "dev"
+}
