@@ -4,8 +4,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]  # ← SOLO en PRs activos, NO en closed
     branches: [ main ]  
-    paths:
-    - 'terraform/**'
 
 permissions:
   id-token: write
