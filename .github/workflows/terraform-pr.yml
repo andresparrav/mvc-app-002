@@ -3,7 +3,7 @@ name: 'Terraform PR Validation'
 on:
   push:
     branches: [ main ]
- #   paths:
+#   paths:
 #      - 'terraform/**'
 
   pull_request:
@@ -47,7 +47,7 @@ jobs:
       continue-on-error: true
 
     - name: Update PR with Plan Result
-      if: always()
+      if: github.event.pull_request.state == 'open'  # ← SOLO si PR está ABIERTO
       uses: actions/github-script@v6
       with:
         script: |
