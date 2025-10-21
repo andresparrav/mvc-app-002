@@ -13,6 +13,7 @@ permissions:
 
 jobs:
   terraform-deploy:
+    if: github.event.pull_request.merged == true  # ← SOLO si fue MERGE (no solo close)
     runs-on: ubuntu-latest
     environment: production
     defaults:
@@ -32,26 +33,10 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
 
     - name: Terraform Init
       run: terraform init
-
-    - name: Terraform Validate
-      run: terraform validate
-
-    - name: Terraform Plan
-      run: terraform plan -no-color
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Build .NET Application
-      run: dotnet build --configuration Release
-
-    - name: Publish .NET Application
-      run: dotnet publish -c Release -o ./publish
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
