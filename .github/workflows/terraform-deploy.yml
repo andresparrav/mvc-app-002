@@ -51,16 +51,36 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve
 
-    - name: Get Terraform Outputs
+    - name: Verify and Get Terraform Outputs
       id: terraform-output
       run: |
-        echo "resource_group_name=$(terraform output -raw resource_group_name)" >> $GITHUB_OUTPUT
-        echo "app_service_name=$(terraform output -raw app_service_name)" >> $GITHUB_OUTPUT
+        # Verificar que el apply fue exitoso
+        echo "=== Verificando despliegue ==="
+        terraform state list
+        
+        # Recargar estado
+        echo "=== Recargando estado ==="
+        terraform refresh -lock=false
+        
+        # Obtener outputs
+        echo "=== Obteniendo outputs ==="
+        RG_NAME=$(terraform output -raw resource_group_name)
+        APP_NAME=$(terraform output -raw app_service_name)
+        
+        echo "resource_group_name=$RG_NAME" >> $GITHUB_OUTPUT
+        echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
+        
+        echo "✅ Resource Group: $RG_NAME"
+        echo "✅ App Service: $APP_NAME"
 
     - name: Deploy .NET Application
       run: |
+        echo "🔨 Desplegando aplicación..."
+        echo "Resource Group: ${{ steps.terraform-output.outputs.resource_group_name }}"
+        echo "App Service: ${{ steps.terraform-output.outputs.app_service_name }}"
+        
         az webapp deploy \
-          --resource-group ${{ steps.terraform-output.outputs.resource_group_name }} \
-          --name ${{ steps.terraform-output.outputs.app_service_name }} \
+          --resource-group "${{ steps.terraform-output.outputs.resource_group_name }}" \
+          --name "${{ steps.terraform-output.outputs.app_service_name }}" \
           --src-path ./publish \
           --type zip
