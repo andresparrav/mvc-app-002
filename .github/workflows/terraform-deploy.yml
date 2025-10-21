@@ -54,19 +54,17 @@ jobs:
     - name: Get Terraform Outputs
       id: terraform-output
       run: |
-        # Crear archivo temporal con los outputs
-        terraform output -json > terraform_outputs.json
+        # Método directo sin JSON
+        echo "=== Obteniendo outputs directamente ==="
+        RG_NAME=$(terraform output resource_group_name)
+        APP_NAME=$(terraform output app_service_name)
         
-        # Extraer valores usando jq
-        jq -r '.resource_group_name.value' terraform_outputs.json > rg_name.txt
-        jq -r '.app_service_name.value' terraform_outputs.json > app_name.txt
+        # Limpiar las comillas si existen
+        RG_NAME=$(echo $RG_NAME | tr -d '"')
+        APP_NAME=$(echo $APP_NAME | tr -d '"')
         
-        RG_NAME=$(cat rg_name.txt)
-        APP_NAME=$(cat app_name.txt)
-        
-        # Usar environment file en lugar de GITHUB_OUTPUT
-        echo "RESOURCE_GROUP_NAME=$RG_NAME" >> $GITHUB_ENV
-        echo "APP_SERVICE_NAME=$APP_NAME" >> $GITHUB_ENV
+        echo "resource_group_name=$RG_NAME" >> $GITHUB_OUTPUT
+        echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
         
         echo "✅ Resource Group: $RG_NAME"
         echo "✅ App Service: $APP_NAME"
