@@ -1,6 +1,6 @@
 output "app_url" {
   description = "URL de la aplicación desplegada"
-  value       = azurerm_linux_web_app.app_service.default_hostname
+  value       = "https://${azurerm_linux_web_app.main.default_hostname}"  # ← main, no app_service
 }
 
 output "resource_group_name" {
@@ -10,5 +10,5 @@ output "resource_group_name" {
 
 output "app_service_name" {
   description = "Nombre del App Service creado"
-  value       = azurerm_linux_web_app.app_service.name
+  value       = azurerm_linux_web_app.main.name  # ← main, no app_service
 }
