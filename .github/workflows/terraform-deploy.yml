@@ -51,24 +51,22 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve
 
-    - name: Verify and Get Terraform Outputs
+    - name: Get Terraform Outputs
       id: terraform-output
       run: |
-        # Verificar que el apply fue exitoso
-        echo "=== Verificando despliegue ==="
-        terraform state list
+        # Crear archivo temporal con los outputs
+        terraform output -json > terraform_outputs.json
         
-        # Recargar estado
-        echo "=== Recargando estado ==="
-        terraform refresh -lock=false
+        # Extraer valores usando jq
+        jq -r '.resource_group_name.value' terraform_outputs.json > rg_name.txt
+        jq -r '.app_service_name.value' terraform_outputs.json > app_name.txt
         
-        # Obtener outputs
-        echo "=== Obteniendo outputs ==="
-        RG_NAME=$(terraform output -raw resource_group_name)
-        APP_NAME=$(terraform output -raw app_service_name)
+        RG_NAME=$(cat rg_name.txt)
+        APP_NAME=$(cat app_name.txt)
         
-        echo "resource_group_name=$RG_NAME" >> $GITHUB_OUTPUT
-        echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
+        # Usar environment file en lugar de GITHUB_OUTPUT
+        echo "RESOURCE_GROUP_NAME=$RG_NAME" >> $GITHUB_ENV
+        echo "APP_SERVICE_NAME=$APP_NAME" >> $GITHUB_ENV
         
         echo "✅ Resource Group: $RG_NAME"
         echo "✅ App Service: $APP_NAME"
@@ -76,11 +74,11 @@ jobs:
     - name: Deploy .NET Application
       run: |
         echo "🔨 Desplegando aplicación..."
-        echo "Resource Group: ${{ steps.terraform-output.outputs.resource_group_name }}"
-        echo "App Service: ${{ steps.terraform-output.outputs.app_service_name }}"
+        echo "Resource Group: $RESOURCE_GROUP_NAME"
+        echo "App Service: $APP_SERVICE_NAME"
         
         az webapp deploy \
-          --resource-group "${{ steps.terraform-output.outputs.resource_group_name }}" \
-          --name "${{ steps.terraform-output.outputs.app_service_name }}" \
+          --resource-group "$RESOURCE_GROUP_NAME" \
+          --name "$APP_SERVICE_NAME" \
           --src-path ./publish \
           --type zip
