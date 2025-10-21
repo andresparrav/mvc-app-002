@@ -12,7 +12,7 @@ permissions:
 jobs:
   terraform-validation:
     runs-on: ubuntu-latest
-    environment: production  # ← Esto vincula con tu federated credential
+    environment: development
     defaults:
       run:
         working-directory: ./terraform
