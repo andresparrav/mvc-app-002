@@ -1,13 +1,9 @@
 name: 'Terraform PR Validation'
 
 on:
-  push:
-    branches: [ main ]
-#   paths:
-#      - 'terraform/**'
-
   pull_request:
-    branches: [ main ]
+    types: [opened, synchronize, reopened]  # ← SOLO en PRs activos, NO en closed
+    branches: [ main ]  
     paths:
     - 'terraform/**'
 
@@ -51,22 +47,22 @@ jobs:
         echo "::set-output name=plan_exitcode::$?"
       continue-on-error: true
 
-    - name: Update PR with Plan Result
-      if: github.event.pull_request.state == 'open'  # ← SOLO si PR está ABIERTO
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const output = `#### Terraform Plan Result 📋
-          \`\`\`
-          ${process.env.PLAN_STDOUT}
-          \`\`\`
-          *Pushered by: @${{ github.actor }}*`;
-          
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: output
-          });
-      env:
-        PLAN_STDOUT: ${{ steps.plan.outputs.stdout }}
+    #- name: Update PR with Plan Result
+    #  if: github.event.pull_request.state == 'open'  # ← SOLO si PR está ABIERTO
+    #  uses: actions/github-script@v6
+    #  with:
+    #    script: |
+    #      const output = `#### Terraform Plan Result 📋
+    #      \`\`\`
+    #      ${process.env.PLAN_STDOUT}
+    #      \`\`\`
+    #      *Pushered by: @${{ github.actor }}*`;
+    #      
+    #      github.rest.issues.createComment({
+    #        issue_number: context.issue.number,
+    #        owner: context.repo.owner,
+    #        repo: context.repo.repo,
+    #        body: output
+    #      });
+    #  env:
+    #    PLAN_STDOUT: ${{ steps.plan.outputs.stdout }}
