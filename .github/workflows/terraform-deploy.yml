@@ -54,29 +54,44 @@ jobs:
     - name: Get Terraform Outputs
       id: terraform-output
       run: |
-        # Método directo sin JSON
-        echo "=== Obteniendo outputs directamente ==="
-        RG_NAME=$(terraform output resource_group_name)
-        APP_NAME=$(terraform output app_service_name)
+        echo "=== Verificando directorio actual ==="
+        pwd
+        ls -la
         
-        # Limpiar las comillas si existen
-        RG_NAME=$(echo $RG_NAME | tr -d '"')
-        APP_NAME=$(echo $APP_NAME | tr -d '"')
+        echo "=== Verificando outputs de Terraform ==="
+        terraform output
+        
+        echo "=== Obteniendo valores ==="
+        RG_NAME=$(terraform output -raw resource_group_name)
+        APP_NAME=$(terraform output -raw app_service_name)
         
         echo "resource_group_name=$RG_NAME" >> $GITHUB_OUTPUT
         echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
         
-        echo "✅ Resource Group: $RG_NAME"
-        echo "✅ App Service: $APP_NAME"
+        echo "✅ Valores guardados:"
+        echo "✔️ Resource Group: $RG_NAME"
+        echo "✔️ App Service: $APP_NAME"
 
     - name: Deploy .NET Application
       run: |
-        echo "🔨 Desplegando aplicación..."
-        echo "Resource Group: $RESOURCE_GROUP_NAME"
-        echo "App Service: $APP_SERVICE_NAME"
-        
-        az webapp deploy \
-          --resource-group "$RESOURCE_GROUP_NAME" \
-          --name "$APP_SERVICE_NAME" \
-          --src-path ./publish \
-          --type zip
+        echo "=== Verificando variables ==="
+    echo "Resource Group: ${{ steps.terraform-output.outputs.resource_group_name }}"
+    echo "App Service: ${{ steps.terraform-output.outputs.app_service_name }}"
+    
+    # Si las variables están vacías, fallar inmediatamente
+    if [ -z "${{ steps.terraform-output.outputs.resource_group_name }}" ]; then
+      echo "❌ ERROR: resource_group_name está vacío"
+      exit 1
+    fi
+    
+    if [ -z "${{ steps.terraform-output.outputs.app_service_name }}" ]; then
+      echo "❌ ERROR: app_service_name está vacío"
+      exit 1
+    fi
+    
+    echo "🔨 Desplegando aplicación..."
+    az webapp deploy \
+      --resource-group "${{ steps.terraform-output.outputs.resource_group_name }}" \
+      --name "${{ steps.terraform-output.outputs.app_service_name }}" \
+      --src-path ./publish \
+      --type zip
