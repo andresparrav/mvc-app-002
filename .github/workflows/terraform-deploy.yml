@@ -63,9 +63,9 @@ jobs:
         echo "resource_group_name=$RG_NAME" >> $GITHUB_OUTPUT
         echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
         
-        echo "✅ Valores guardados:"
-        echo "🔵 Resource Group: $RG_NAME"
-        echo "🔵 App Service: $APP_NAME"
+        echo "🔵 Valores guardados:"
+        echo "resource_group_name=$RG_NAME" >> $GITHUB_OUTPUT
+        echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
 
         echo "✔️ Valores obtenidos correctamente" 
 
