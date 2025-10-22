@@ -54,23 +54,22 @@ jobs:
     - name: Get Terraform Outputs
       id: terraform-output
       run: |
-        echo "=== Verificando directorio actual ==="
-        pwd
-        ls -la
-        
-        echo "=== Verificando outputs de Terraform ==="
-        terraform output
-        
         echo "=== Obteniendo valores ==="
+    
+        # Obtener Resource Group (solo el valor)
         RG_NAME=$(terraform output -raw resource_group_name)
-        APP_NAME=$(terraform output -raw app_service_name)
-        
         echo "resource_group_name=$RG_NAME" >> $GITHUB_OUTPUT
-        echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
         
-        echo "✅ Valores guardados:"
-        echo "✔️ Resource Group: $RG_NAME"
-        echo "✔️ App Service: $APP_NAME"
+        # Obtener App Service (solo el valor)  
+        APP_SERVICE_NAME=$(terraform output -raw app_service_name)
+        echo "app_service_name=$APP_SERVICE_NAME" >> $GITHUB_OUTPUT
+        
+        # Obtener App URL (solo el valor)
+        APP_URL=$(terraform output -raw app_url)
+        echo "app_url=$APP_URL" >> $GITHUB_OUTPUT
+        
+        echo "✔️ Valores obtenidos correctamente" 
+
 
     - name: Deploy .NET Application # despliegue
       run: |
