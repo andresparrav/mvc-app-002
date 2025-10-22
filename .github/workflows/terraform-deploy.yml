@@ -72,26 +72,26 @@ jobs:
         echo "✔️ Resource Group: $RG_NAME"
         echo "✔️ App Service: $APP_NAME"
 
-    - name: Deploy .NET Application
+    - name: Deploy .NET Application # despliegue
       run: |
         echo "=== Verificando variables ==="
-    echo "Resource Group: ${{ steps.terraform-output.outputs.resource_group_name }}"
-    echo "App Service: ${{ steps.terraform-output.outputs.app_service_name }}"
-    
-    # Si las variables están vacías, fallar inmediatamente
-    if [ -z "${{ steps.terraform-output.outputs.resource_group_name }}" ]; then
-      echo "❌ ERROR: resource_group_name está vacío"
-      exit 1
-    fi
-    
-    if [ -z "${{ steps.terraform-output.outputs.app_service_name }}" ]; then
-      echo "❌ ERROR: app_service_name está vacío"
-      exit 1
-    fi
-    
-    echo "🔨 Desplegando aplicación..."
-    az webapp deploy \
-      --resource-group "${{ steps.terraform-output.outputs.resource_group_name }}" \
-      --name "${{ steps.terraform-output.outputs.app_service_name }}" \
-      --src-path ./publish \
-      --type zip
+        echo "Resource Group: ${{ steps.terraform-output.outputs.resource_group_name }}"
+        echo "App Service: ${{ steps.terraform-output.outputs.app_service_name }}"
+        
+        # Si las variables están vacías, fallar inmediatamente
+        if [ -z "${{ steps.terraform-output.outputs.resource_group_name }}" ]; then
+          echo "❌ ERROR: resource_group_name está vacío"
+          exit 1
+        fi
+        
+        if [ -z "${{ steps.terraform-output.outputs.app_service_name }}" ]; then
+          echo "❌ ERROR: app_service_name está vacío"
+          exit 1
+        fi
+        
+        echo "🔨 Desplegando aplicación..."
+        az webapp deploy \
+          --resource-group "${{ steps.terraform-output.outputs.resource_group_name }}" \
+          --name "${{ steps.terraform-output.outputs.app_service_name }}" \
+          --src-path ./publish \
+          --type zip
