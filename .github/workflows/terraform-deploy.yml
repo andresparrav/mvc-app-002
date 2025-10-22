@@ -51,7 +51,7 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve
 
-      # trabajo actual 2
+      # trabajo actual
     - name: Get Terraform Outputs
       id: terraform-output
       run: |
