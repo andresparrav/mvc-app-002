@@ -55,19 +55,18 @@ jobs:
       id: terraform-output
       run: |
         echo "=== Obteniendo valores ==="
-    
-        # Obtener Resource Group (solo el valor)
-        RG_NAME=$(terraform output -raw resource_group_name)
+
+        # Sin -raw para evitar problemas de formato
+        RG_NAME=$(terraform output resource_group_name | tr -d '"')
+        APP_NAME=$(terraform output app_service_name | tr -d '"')
+        
         echo "resource_group_name=$RG_NAME" >> $GITHUB_OUTPUT
+        echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
         
-        # Obtener App Service (solo el valor)  
-        APP_SERVICE_NAME=$(terraform output -raw app_service_name)
-        echo "app_service_name=$APP_SERVICE_NAME" >> $GITHUB_OUTPUT
-        
-        # Obtener App URL (solo el valor)
-        APP_URL=$(terraform output -raw app_url)
-        echo "app_url=$APP_URL" >> $GITHUB_OUTPUT
-        
+        echo "✅ Valores guardados:"
+        echo "🔵 Resource Group: $RG_NAME"
+        echo "🔵 App Service: $APP_NAME"
+
         echo "✔️ Valores obtenidos correctamente" 
 
 
