@@ -3,7 +3,7 @@ name: 'Terraform Deploy to Azure'
 on:
   # Se activa en MERGE de PRs
   pull_request:
-    types: [closed]
+    #types: [closed]
     branches: [ main ]
 
   # Se activa en push directo a main (backup)
