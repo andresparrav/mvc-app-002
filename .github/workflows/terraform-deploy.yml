@@ -57,8 +57,8 @@ jobs:
         echo "=== Obteniendo valores ==="
 
         # Sin -raw para evitar problemas de formato
-        RG_NAME=$(terraform output resource_group_name | tr -d '"')
-        APP_NAME=$(terraform output app_service_name | tr -d '"')
+        RG_NAME=$(terraform output resource_group_name 2>/dev/null | tr -d '"')
+        APP_NAME=$(terraform output app_service_name 2>/dev/null | tr -d '"')
         
         echo "resource_group_name=$RG_NAME" >> $GITHUB_OUTPUT
         echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
