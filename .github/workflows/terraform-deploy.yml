@@ -9,8 +9,8 @@ on:
   # Se activa en push directo a main (backup)
   push:
     branches: [ main ]
-    paths:
-      - 'terraform/**'
+    #paths:
+    #  - 'terraform/**'
 
 permissions:
   id-token: write
@@ -51,6 +51,7 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve
 
+      # trabajo actual 2
     - name: Get Terraform Outputs
       id: terraform-output
       run: |
@@ -64,8 +65,8 @@ jobs:
         echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
         
         echo "🔵 Valores guardados:"
-        echo "resource_group_name=$RG_NAME" >> $GITHUB_OUTPUT
-        echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
+        echo "Resource Group: $RG_NAME"
+        echo "App Service: $APP_NAME"
 
         echo "✔️ Valores obtenidos correctamente" 
 
