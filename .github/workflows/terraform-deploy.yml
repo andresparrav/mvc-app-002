@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   terraform-deploy:
-    # Para PRs closed, solo ejecutar si fue MERGE
+    # Para PRs closed, solo ejecutar si fue MERGE 2
     if: |    
       github.event_name == 'push' ||
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
