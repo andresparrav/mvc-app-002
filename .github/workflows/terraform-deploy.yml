@@ -81,9 +81,9 @@ jobs:
         cd ${{ github.workspace }}/terraform || exit 1
 
          # Obtener outputs y guardarlos en variables
-        APP_SERVICE_NAME=$(terraform output -raw app_service_name)
-        RESOURCE_GROUP=$(terraform output -raw resource_group_name)
-        APP_URL=$(terraform output -raw app_url)
+        APP_SERVICE_NAME=$(terraform output -raw app_service_name 2>/dev/null)
+        RESOURCE_GROUP=$(terraform output -raw resource_group_name 2>/dev/null)
+        APP_URL=$(terraform output -raw app_url 2>/dev/null)
         
         # Guardar en outputs del step
         echo "app_service_name=$APP_SERVICE_NAME" >> $GITHUB_OUTPUT
