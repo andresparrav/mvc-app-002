@@ -80,10 +80,16 @@ jobs:
         echo "Workspace: ${{ github.workspace }}"
         cd ${{ github.workspace }}/terraform || exit 1
 
-        # Obtener outputs usando terraform show (más limpio)
-        RESOURCE_GROUP=$(terraform output -raw resource_group_name 2>/dev/null | tr -d '\n')
-        APP_SERVICE_NAME=$(terraform output -raw app_service_name 2>/dev/null | tr -d '\n')
-        APP_URL=$(terraform output -raw app_url 2>/dev/null | tr -d '\n')
+        # Deshabilitar temporalmente los comandos de workflow
+        echo "::stop-commands::StopTerraformOutputs"
+        
+        # Obtener outputs sin interferencia de GitHub
+        RESOURCE_GROUP=$(terraform output -raw resource_group_name)
+        APP_SERVICE_NAME=$(terraform output -raw app_service_name)
+        APP_URL=$(terraform output -raw app_url)
+        
+        # Rehabilitar comandos de workflow
+        echo "::StartCommands::"
         
         # Guardar en outputs del step
         echo "app_service_name=$APP_SERVICE_NAME" >> $GITHUB_OUTPUT
