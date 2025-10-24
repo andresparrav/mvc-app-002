@@ -81,9 +81,9 @@ jobs:
         cd ${{ github.workspace }}/terraform || exit 1
 
         # Obtener outputs usando terraform show (más limpio)
-        RESOURCE_GROUP=$(terraform show -json | jq -r '.values.outputs.resource_group_name.value')
-        APP_SERVICE_NAME=$(terraform show -json | jq -r '.values.outputs.app_service_name.value')
-        APP_URL=$(terraform show -json | jq -r '.values.outputs.app_url.value')
+        RESOURCE_GROUP=$(terraform output -raw resource_group_name 2>/dev/null | tr -d '\n')
+        APP_SERVICE_NAME=$(terraform output -raw app_service_name 2>/dev/null | tr -d '\n')
+        APP_URL=$(terraform output -raw app_url 2>/dev/null | tr -d '\n')
         
         # Guardar en outputs del step
         echo "app_service_name=$APP_SERVICE_NAME" >> $GITHUB_OUTPUT
