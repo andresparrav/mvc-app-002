@@ -78,14 +78,14 @@ jobs:
         echo "=== Obteniendo valores ==="
         
         echo "Workspace: ${{ github.workspace }}"
-        cd ${{ github.workspace }}
-        echo "=== Archivos en el workspace ==="
-        ls -la
-        echo "=== Archivos Terraform ==="
+        cd ${{ github.workspace }}/terraform || exit 1
+
+         # Verificar archivos Terraform
+        echo "📋 Archivos Terraform:"
         ls -la *.tf
-        terraform output
         
-        echo "Directorio actual: $(pwd)"
+        # Obtener outputs
+        echo "🎯 Outputs de Terraform:"
         terraform output
 
         # Sin -raw para evitar problemas de formato
