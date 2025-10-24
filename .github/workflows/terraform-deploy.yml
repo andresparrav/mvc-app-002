@@ -80,24 +80,22 @@ jobs:
         echo "Workspace: ${{ github.workspace }}"
         cd ${{ github.workspace }}/terraform || exit 1
 
-         # Verificar archivos Terraform
-        echo "📋 Archivos Terraform:"
-        ls -la *.tf
+         # Obtener outputs y guardarlos en variables
+        APP_SERVICE_NAME=$(terraform output -raw app_service_name)
+        RESOURCE_GROUP=$(terraform output -raw resource_group_name)
+        APP_URL=$(terraform output -raw app_url)
         
-        # Obtener outputs
-        echo "🎯 Outputs de Terraform:"
-        terraform output
-
-        # Sin -raw para evitar problemas de formato
-        RG_NAME=${{ steps.terraform-output.outputs.resource_group_name }}
-        APP_NAME=${{ steps.terraform-output.outputs.app_service_name }}
-        
-        echo "resource_group_name=$RG_NAME" >> $GITHUB_OUTPUT
-        echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
+        # Guardar en outputs del step
+        echo "app_service_name=$APP_SERVICE_NAME" >> $GITHUB_OUTPUT
+        echo "resource_group_name=$RESOURCE_GROUP" >> $GITHUB_OUTPUT
+        echo "app_url=$APP_URL" >> $GITHUB_OUTPUT
         
         echo "🔵 Valores guardados:"
-        echo "Resource Group: $RG_NAME"
-        echo "App Service: $APP_NAME"
+        echo "Resource Group: $RESOURCE_GROUP"
+        echo "App Service: $APP_SERVICE_NAME"
+        echo "App URL: $APP_URL"
+        
+        working-directory: ${{ github.workspace }}/terraform
 
         echo "✔️ Valores obtenidos correctamente" 
 
