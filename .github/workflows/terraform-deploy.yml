@@ -77,18 +77,13 @@ jobs:
       run: |
         echo "=== Obteniendo valores ==="
         
-        # Verificar la ruta correcta
-        echo "Buscando directorio de Terraform..."
-        if [ -d "./terraform" ]; then
-          cd ./terraform
-        elif [ -d "terraform" ]; then
-          cd terraform
-        else
-          echo "❌ ERROR: No se encuentra directorio de Terraform"
-          echo "Directorios disponibles:"
-          ls -la
-          exit 1
-        fi
+        echo "Workspace: ${{ github.workspace }}"
+        cd ${{ github.workspace }}
+        echo "=== Archivos en el workspace ==="
+        ls -la
+        echo "=== Archivos Terraform ==="
+        ls -la *.tf
+        terraform output
         
         echo "Directorio actual: $(pwd)"
         terraform output
