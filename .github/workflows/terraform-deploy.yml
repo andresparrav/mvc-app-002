@@ -35,6 +35,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Debug Directory Structure
+      run: |
+        echo "=== Estructura del repositorio ==="
+        pwd
+        ls -la
+        echo "=== Buscando archivos de Terraform ==="
+        find . -name "*.tf" -o -name "terraform" -type d
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
 
@@ -69,14 +77,20 @@ jobs:
       run: |
         echo "=== Obteniendo valores ==="
         
-        # Forzar el directorio de Terraform
-        cd ./terraform || exit 1
+        # Verificar la ruta correcta
+        echo "Buscando directorio de Terraform..."
+        if [ -d "./terraform" ]; then
+          cd ./terraform
+        elif [ -d "terraform" ]; then
+          cd terraform
+        else
+          echo "❌ ERROR: No se encuentra directorio de Terraform"
+          echo "Directorios disponibles:"
+          ls -la
+          exit 1
+        fi
         
         echo "Directorio actual: $(pwd)"
-        echo "Archivos:"
-        ls -la
-        
-        echo "=== Ejecutando terraform output ==="
         terraform output
 
         # Sin -raw para evitar problemas de formato
