@@ -55,6 +55,12 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve
 
+    - name: Debug Outputs
+      run: |
+        echo "=== Todas las outputs de este step ==="
+        echo "🔵 Resource Group: ${{ steps.terraform-output.outputs.resource_group_name }}"
+        echo "🔵 App Service: ${{ steps.terraform-output.outputs.app_service_name }}"
+
       # trabajo actual
     - name: Get Terraform Outputs
       id: terraform-output
