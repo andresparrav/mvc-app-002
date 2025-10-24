@@ -61,11 +61,23 @@ jobs:
         echo "🔵 Resource Group: ${{ steps.terraform-output.outputs.resource_group_name }}"
         echo "🔵 App Service: ${{ steps.terraform-output.outputs.app_service_name }}"
 
+    
+
       # trabajo actual
     - name: Get Terraform Outputs
       id: terraform-output
       run: |
         echo "=== Obteniendo valores ==="
+        
+        # Forzar el directorio de Terraform
+        cd ./terraform || exit 1
+        
+        echo "Directorio actual: $(pwd)"
+        echo "Archivos:"
+        ls -la
+        
+        echo "=== Ejecutando terraform output ==="
+        terraform output
 
         # Sin -raw para evitar problemas de formato
         RG_NAME=${{ steps.terraform-output.outputs.resource_group_name }}
