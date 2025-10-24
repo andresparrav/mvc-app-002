@@ -7,7 +7,7 @@ resource "azurerm_resource_group" "main" {
     application = var.app_name
   }
 }
-/*
+
 resource "azurerm_service_plan" "main" {
   name                = "${var.app_name}-${var.environment}-asp"
   resource_group_name = azurerm_resource_group.main.name
@@ -43,4 +43,4 @@ resource "azurerm_linux_web_app" "main" {
     application = var.app_name
   }
 }
-*/
+
