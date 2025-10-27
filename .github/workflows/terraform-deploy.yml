@@ -76,22 +76,18 @@ jobs:
       id: terraform-output
       run: |
         echo "📊 === Obteniendo valores ==="
+    
+        echo "Directorio actual: $(pwd)"
+        echo "Archivos en directorio:"
+        ls -la
         
-        echo "Workspace: ${{ github.workspace }}"
-        cd ${{ github.workspace }}/terraform || exit 1
-
-        echo "💎 Deshabilitar temporalmente los comandos de workflow"
-        echo "::stop-commands::StopTerraformOutputs"
-        
-        echo "💎 Obtener outputs sin interferencia de GitHub"
+        # Obtener outputs directamente
+        echo "💎 Obtener outputs:"
         RESOURCE_GROUP=$(terraform output -raw resource_group_name)
         APP_SERVICE_NAME=$(terraform output -raw app_service_name)
         APP_URL=$(terraform output -raw app_url)
         
-        echo "💎 Rehabilitar comandos de workflow"
-        echo "::StartCommands::"
-        
-        echo "💎 Guardar en outputs del step"
+        # Guardar en outputs del step
         echo "app_service_name=$APP_SERVICE_NAME" >> $GITHUB_OUTPUT
         echo "resource_group_name=$RESOURCE_GROUP" >> $GITHUB_OUTPUT
         echo "app_url=$APP_URL" >> $GITHUB_OUTPUT
@@ -101,8 +97,6 @@ jobs:
         echo "App Service: $APP_SERVICE_NAME"
         echo "App URL: $APP_URL"
         
-        working-directory: ${{ github.workspace }}/terraform
-
         echo "✔️ Valores obtenidos correctamente"
 
 
