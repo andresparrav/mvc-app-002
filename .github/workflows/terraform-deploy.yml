@@ -75,23 +75,23 @@ jobs:
     - name: Get Terraform Outputs
       id: terraform-output
       run: |
-        echo "=== Obteniendo valores ==="
+        echo "📊 === Obteniendo valores ==="
         
         echo "Workspace: ${{ github.workspace }}"
         cd ${{ github.workspace }}/terraform || exit 1
 
-        # Deshabilitar temporalmente los comandos de workflow
+        echo "💎 Deshabilitar temporalmente los comandos de workflow"
         echo "::stop-commands::StopTerraformOutputs"
         
-        # Obtener outputs sin interferencia de GitHub
+        echo "💎 Obtener outputs sin interferencia de GitHub"
         RESOURCE_GROUP=$(terraform output -raw resource_group_name)
         APP_SERVICE_NAME=$(terraform output -raw app_service_name)
         APP_URL=$(terraform output -raw app_url)
         
-        # Rehabilitar comandos de workflow
+        echo "💎 Rehabilitar comandos de workflow"
         echo "::StartCommands::"
         
-        # Guardar en outputs del step
+        echo "💎 Guardar en outputs del step"
         echo "app_service_name=$APP_SERVICE_NAME" >> $GITHUB_OUTPUT
         echo "resource_group_name=$RESOURCE_GROUP" >> $GITHUB_OUTPUT
         echo "app_url=$APP_URL" >> $GITHUB_OUTPUT
@@ -103,7 +103,7 @@ jobs:
         
         working-directory: ${{ github.workspace }}/terraform
 
-        echo "✔️ Valores obtenidos correctamente" 
+        echo "✔️ Valores obtenidos correctamente"
 
 
     - name: Deploy .NET Application # despliegue
