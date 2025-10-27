@@ -1,8 +1,8 @@
 name: 'Terraform PR Validation'
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]  # ← SOLO en PRs activos, NO en closed
+  push:
+    #types: [opened, synchronize, reopened]  # ← SOLO en PRs activos, NO en closed
     branches: [ main ]  
 
 permissions:

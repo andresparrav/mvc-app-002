@@ -3,14 +3,14 @@ name: 'Terraform Deploy to Azure'
 on:
   # Se activa en MERGE de PRs
   pull_request:
-    types: [closed]
+    #types: [closed]
     branches: [ main ]
 
   # Se activa en push directo a main (backup)
   push:
     branches: [ main ]
-    paths:
-      - 'terraform/**'
+    #paths:
+    #  - 'terraform/**'
 
 permissions:
   id-token: write
@@ -19,8 +19,12 @@ permissions:
 jobs:
   terraform-deploy:
     # Para PRs closed, solo ejecutar si fue MERGE
-    if: |
-      github.event.pull_request.merged == true
+    if: |    
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+
+    # github.event.pull_request.merged == true
+    
     runs-on: ubuntu-latest
     # environment: production
     defaults:
@@ -30,6 +34,14 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Debug Directory Structure
+      run: |
+        echo "=== Estructura del repositorio ==="
+        pwd
+        ls -la
+        echo "=== Buscando archivos de Terraform ==="
+        find . -name "*.tf" -o -name "terraform" -type d
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -51,21 +63,45 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve
 
+    - name: Debug Outputs
+      run: |
+        echo "=== Todas las outputs de este step ==="
+        echo "🔵 Resource Group: ${{ steps.terraform-output.outputs.resource_group_name }}"
+        echo "🔵 App Service: ${{ steps.terraform-output.outputs.app_service_name }}"
+
+    
+
+      # trabajo actual
     - name: Get Terraform Outputs
       id: terraform-output
       run: |
         echo "=== Obteniendo valores ==="
-
-        # Sin -raw para evitar problemas de formato
-        RG_NAME=$(terraform output resource_group_name 2>/dev/null | tr -d '"')
-        APP_NAME=$(terraform output app_service_name 2>/dev/null | tr -d '"')
         
-        echo "resource_group_name=$RG_NAME" >> $GITHUB_OUTPUT
-        echo "app_service_name=$APP_NAME" >> $GITHUB_OUTPUT
+        echo "Workspace: ${{ github.workspace }}"
+        cd ${{ github.workspace }}/terraform || exit 1
+
+        # Deshabilitar temporalmente los comandos de workflow
+        echo "::stop-commands::StopTerraformOutputs"
+        
+        # Obtener outputs sin interferencia de GitHub
+        RESOURCE_GROUP=$(terraform output -raw resource_group_name)
+        APP_SERVICE_NAME=$(terraform output -raw app_service_name)
+        APP_URL=$(terraform output -raw app_url)
+        
+        # Rehabilitar comandos de workflow
+        echo "::StartCommands::"
+        
+        # Guardar en outputs del step
+        echo "app_service_name=$APP_SERVICE_NAME" >> $GITHUB_OUTPUT
+        echo "resource_group_name=$RESOURCE_GROUP" >> $GITHUB_OUTPUT
+        echo "app_url=$APP_URL" >> $GITHUB_OUTPUT
         
         echo "🔵 Valores guardados:"
-        echo "Resource Group: $RG_NAME"
-        echo "App Service: $APP_NAME"
+        echo "Resource Group: $RESOURCE_GROUP"
+        echo "App Service: $APP_SERVICE_NAME"
+        echo "App URL: $APP_URL"
+        
+        working-directory: ${{ github.workspace }}/terraform
 
         echo "✔️ Valores obtenidos correctamente" 
 
