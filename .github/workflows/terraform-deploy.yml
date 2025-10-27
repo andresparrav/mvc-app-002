@@ -77,15 +77,15 @@ jobs:
       run: |
         echo "📊 === Obteniendo valores ==="
     
-        echo "Directorio actual: $(pwd)"
-        echo "Archivos en directorio:"
-        ls -la
+        # Obtener outputs SIN -raw y limpiar la salida
+        echo "💎 Obtener resource_group_name:"
+        RESOURCE_GROUP=$(terraform output resource_group_name | head -1 | tr -d '"' | tr -d '\n')
         
-        # Obtener outputs directamente
-        echo "💎 Obtener outputs:"
-        RESOURCE_GROUP=$(terraform output -raw resource_group_name)
-        APP_SERVICE_NAME=$(terraform output -raw app_service_name)
-        APP_URL=$(terraform output -raw app_url)
+        echo "💎 Obtener app_service_name:"
+        APP_SERVICE_NAME=$(terraform output app_service_name | head -1 | tr -d '"' | tr -d '\n')
+        
+        echo "💎 Obtener app_url:"
+        APP_URL=$(terraform output app_url | head -1 | tr -d '"' | tr -d '\n')
         
         # Guardar en outputs del step
         echo "app_service_name=$APP_SERVICE_NAME" >> $GITHUB_OUTPUT
